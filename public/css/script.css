@@ -1,0 +1,54 @@
+html, body, #bodyWrapper {
+    height:100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+#bodyWrapper > div {
+    height: calc(100% - 160px);
+}
+
+/* general */
+.top-buffer { margin-top:20px; }
+
+.text-tab {
+    text-indent: 3em;
+}
+
+/* navbar section related */
+#navbarBrand {
+    margin-left: 20px;
+}
+
+.navbar {
+    border-radius: 0;
+    width: 100%;
+}
+
+/* footer section related */
+#footer {
+    background-color: #3e3f3a;
+    color: #ffffff;
+    width: inherit;
+}
+
+/* SideBar and MainContent division  */
+#sideBar {
+    height: 100%;
+    border-right: 1px solid #000000;
+}
+
+#sideBar ul {
+    padding-left: 15px;
+}
+
+
+
+
+/* main content related */
+.divider-vertical {
+    height: 50px;
+    margin: 0 9px;
+    border-left: 1px solid #F2F2F2;
+    border-right: 1px solid #FFF;
+}
