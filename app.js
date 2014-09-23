@@ -1,54 +1,39 @@
-//core modules
-var fs = require('fs');
-
 //external modules
 var express = require('express'),
-    mongoose = require('mongoose'),
-    bodyParser = require('body-parser'),
-    cookieParser = require('cookie-parser'),
-    morgan = require('morgan'),
-    passport = require('passport'),
-    expressSession = require('express-session');
-
+    mongoose = require('mongoose');
 
 //external modules (middleware)
-var flash = require('connect-flash');
+var flash = require('connect-flash'),
+    bodyParser = require('body-parser'),
+    morgan = require('morgan');
 
 //custom modules
-var routing = require('./config/routing.js'),
-    configPassport = require('./config/passportHandler.js');
+var routing = require('./config/routing'),
+    envVariables = require('./config/env_variables'),
+    logger = require('./logger');
 
-configPassport(passport);
-mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/cloudomatic');
+//mongoose.connect(envVariables.dbConnectionString);
 
 // create and configure express app
 var app = express();
     
-    //general configurations
-    app.use(cookieParser());
-    app.use(expressSession({ secret: 'Cloud is the way to go' }));
-
     app.use(flash());
     app.use(bodyParser());    
     app.use(express.static(__dirname + '/public'));
 
-    //authentication related
-    app.use(passport.initialize());
-    app.use(passport.session());
-	
-    
     //view related configs
     app.set('view engine', 'ejs');
     app.set('views', __dirname + '/view');
 
 
     //logging configuration
-        //for console
-        app.use(morgan('dev'));
-        //into file
+    logger.debug("Overriding 'Express' logger");
+    app.use(morgan({ "stream": logger.stream }));
 
     var appRouter = express.Router();
     app.use('/', appRouter);
-    routing.applyRoutes(appRouter, passport);
+    routing.applyRoutes(appRouter);
 
-app.listen(process.env.PORT || 8000);
+app.listen(envVariables.port, function() {
+    logger.info("Starting to listen on port %s", envVariables.port);
+});
