@@ -1,9 +1,14 @@
-var responseFinalizer = require('./utils/response_finalizer');
+var menuItemsHandler = require('./../model/MenuItems');
 
 module.exports = {
-    notFound: notFound
+    getMenuItems: getMenuItems
 }
 
-function notFound(req, res) {
-    responseFinalizer.finalizeHtmlResponse(req, res, 404, 'home/notFound');
+function getMenuItems(req, res) {
+    menuItemsHandler.getMenuItems(function(menuItems) {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(menuItems));
+    });
 }
+

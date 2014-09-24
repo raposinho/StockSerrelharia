@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Stock Tracker</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+        <!-- css -->
+        <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <link href="/css/script.css" rel="stylesheet" type="text/css">
+        <!-- js -->
+        <script type="application/javascript" src="/js/jquery-2.1.1.min.js"></script>
+        <script type="application/javascript" src="/js/bootstrap.min.js"></script>
+        <script type="application/javascript" src="/js/knockout-3.2.0.js"></script>
+        <script type="application/javascript" src="/js/script.js"></script>
+        <script type="application/javascript">
+            loadContent("<%= initialContent %>");
+        </script>
+    </head>
+    <body>
+
+        <!-- templates related to main items in side bar -->
+        <script id="noContentMainItemSidebarMenuTemplate" type="text/html">
+            <div class="mainSectionSideBarObject">
+                <div class="sideBarItemHeader">
+                    <p><span data-bind="text: displayName"/></p>
+                </div>
+            </div>
+        </script>
+
+        <script id="inactiveMainItemSidebarMenuTemplate" type="text/html">
+            <div class="mainSectionSideBarObject">
+                <div class="sideBarItemHeader" data-bind="click: switchSection">
+                    <p><span data-bind="text: displayName"/><span class="glyphicon glyphicon-chevron-down pull-right"/></p>
+                </div>
+            </div>
+        </script>
+
+        <script id="activeMainItemSidebarMenuTemplate" type="text/html">
+            <div class="mainSectionSideBarObject">
+                <div class="sideBarItemHeader selectedItem" data-bind="click: switchSection">
+                    <p><span data-bind="text: displayName"/><span class="glyphicon glyphicon-chevron-up pull-right"/></p>
+                </div>
+                <div class="sideBarSubItems">
+                    <div data-bind="template: { name: subSectionsDisplayMode, foreach: subContent }"></div>
+                </div>
+            </div>
+        </script>
+
+
+        <!-- templates related to items directly bellow main item in side bar -->
+        <script id="noContentItemSidebarMenuTemplate" type="text/html">
+            <div class="sideBarItemHeader sideBarSubItemsObject">
+                <p><span data-bind="text: displayName"/></p>
+            </div>
+        </script>
+
+        <script id="inactiveItemSidebarMenuTemplate" type="text/html">
+            <div data-bind="click: switchSection">
+                <div class="sideBarItemHeader sideBarSubItemsObject">
+                    <p><span data-bind="text: displayName"/><span class="glyphicon glyphicon-chevron-down pull-right"/></p>
+                </div>
+            </div>
+        </script>
+
+        <script id="activeItemSidebarMenuTemplate" type="text/html">
+            <div>
+                <div class="sideBarItemHeader sideBarSubItemsObject selectedItem" data-bind="click: switchSection">
+                    <p><span data-bind="text: displayName"/><span class="glyphicon glyphicon-chevron-up pull-right"/></p>
+                </div>
+                <div class="sideBarSubItems">
+                    <div data-bind="template: { name: subSectionsDisplayMode, foreach: subContent }"></div>
+                </div>
+            </div>
+        </script>
+
+        <!-- templates related to sections, last level of side bad content -->
+        <script id="sectionSidebarMenuTemplate" type="text/html">
+            <div class="sideBarItemHeader sideBarSubItemsObject">
+                <p data-bind="text: displayName"/>
+            </div>
+        </script>
+
+
+        <!-- templates related to main content (material related) -->
+
+
+
+
+        <!-- base layout -->
+        <div id="bodyWrapper">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header" id="navbarBrand">
+                    <a class="navbar-brand" href="/">Stock Tracker</a>
+                </div>
+            </nav>
+            <div class="row contentWrapper" >
+                <div class="col-md-3" id="sideBar">
+                    <div id="menuItemsWrapper" data-bind="template: { name: mainMenuItemdisplayMode, foreach: menuItems }"></div>
+                </div>
+                <div class="col-md-9" id="mainBody"></div>
+                <div id="footer" class="navbar navbar-inner  navbar-fixed-bottom">
+                    <p class="muted credit top-buffer text-center">@ 2014 Stock Tracker</p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

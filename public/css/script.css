@@ -1,11 +1,20 @@
 html, body, #bodyWrapper {
     height:100%;
     width: 100%;
+}
+
+body {
+    height: calc(100% - 60px);
     overflow-x: hidden;
 }
 
-#bodyWrapper > div {
-    height: calc(100% - 160px);
+.contentWrapper {
+    height: calc(100% - 101px);
+}
+
+#sideBar {
+    height: 100%;
+    overflow: auto;
 }
 
 /* general */
@@ -32,15 +41,43 @@ html, body, #bodyWrapper {
     width: inherit;
 }
 
-/* SideBar and MainContent division  */
+/* SideBar */
 #sideBar {
     height: 100%;
-    border-right: 1px solid #000000;
+    border-right: 1px solid #3e3f3a;
 }
 
-#sideBar ul {
-    padding-left: 15px;
+#menuItemsWrapper {
+    margin-left: 15px;
+    border-radius: 5px;
 }
+
+.mainSectionSideBarObject {
+    min-height: 52px;
+    position: relative;
+    display: block;
+    margin-bottom: -1px;
+    border: 1px solid #dfd7ca;
+}
+
+.sideBarItemHeader {
+    padding: 16px 20px 7px 24px;
+}
+
+.sideBarSubItems {
+    margin-left: 30px;
+    border-left: 1px solid #dfd7ca;
+}
+
+.sideBarSubItemsObject {
+    border-top: 1px solid #dfd7ca;
+}
+
+.selectedItem {
+    background-color: #e0e0e0;
+}
+
+
 
 
 

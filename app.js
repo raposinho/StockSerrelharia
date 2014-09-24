@@ -31,8 +31,9 @@ var app = express();
     app.use(morgan({ "stream": logger.stream }));
 
     var appRouter = express.Router();
-    app.use('/', appRouter);
     routing.applyRoutes(appRouter);
+    app.use('/', appRouter);
+
 
 app.listen(envVariables.port, function() {
     logger.info("Starting to listen on port %s", envVariables.port);
