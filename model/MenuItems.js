@@ -44,11 +44,11 @@ var menuItems = [
                 subSections: [
                     {
                         displayName: 'son1',
-                        appId:5
+                        appId:6
                     },
                     {
                         displayName: 'son2',
-                        appId:5
+                        appId:7
                     }
                 ]
             },

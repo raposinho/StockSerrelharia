@@ -5,8 +5,28 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
         <!-- css -->
-        <link href="/css/external/bootstrap.css" rel="stylesheet" type="text/css">
+        <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
         <link href="/css/script.css" rel="stylesheet" type="text/css">
         <!-- js -->
         <script type="text/javascript" src="https://code.jquery.com/jquery.js"></script>
         <script src="/js/external/bootstrap.min.js"></script>
+        </head>
+        <body>
+        <div id="bodyWrapper">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header" id="navbarBrand">
+                    <a class="navbar-brand" href="/">Stock Tracker</a>
+                </div>
+            </nav>
+            <div class="row" >
+                <div class="col-md-3" id="sideBar">
+                    <div id="menuItemsWrapper">
+                        <% for(var menuItem in menuItems) {
+                            var fullItem = menuItems[menuItem]; %>
+                        <div class="ulLikeDiv">
+                            <p><%= fullItem.displayName%><span class="glyphicon glyphicon-chevron-down pull-right"></span></p>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="col-md-9" id="mainBody">

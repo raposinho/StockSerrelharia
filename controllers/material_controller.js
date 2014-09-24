@@ -14,6 +14,7 @@ function getMaterialContent(req, res) {
 
 var testValues = {
     materialType: 'Parafusos',
+    appId: 5,
     sections: [
 
     ]
