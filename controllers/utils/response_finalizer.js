@@ -1,3 +1,5 @@
+var menuWrapper = require('./../../model/MenuItems')
+
 module.exports = {
     finalizeHtmlResponse: finalizeHtmlResponse
 }
@@ -14,5 +16,6 @@ function addCommonViewFields(req, fields) {
     if(!fields) {
         fields = {};
     }
+    fields.menuItems = menuWrapper.getMenuItems();
     return fields;
 }

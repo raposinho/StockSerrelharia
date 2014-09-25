@@ -3,21 +3,38 @@ html, body, #bodyWrapper {
     width: 100%;
 }
 
-body {
-    height: calc(100% - 60px);
-    overflow-x: hidden;
-}
-
 .contentWrapper {
     height: calc(100% - 101px);
+    margin-right: 5px;
 }
 
-#sideBar {
+/*  ---------------------------------------------------------------------------------------------------
+    --------------------------------------------- general ---------------------------------------------
+    --------------------------------------------------------------------------------------------------- */
+
+.formErrorColor {
+    color: #c9302c;
+}
+
+.horizontalSeperator {
+    width: 80%;
+    left: auto;
+    margin-left: 10%;
+    padding-right: 10%;
+    border-bottom: 1px solid black;
+    margin-bottom: 20px;
+}
+
+#wholeScreenOpacity {
+    z-index: 9998;
+    position: fixed;
     height: 100%;
-    overflow: auto;
+    width: 100%;
+    background-color: black;
+    opacity: 0.5;
+    display: none;
 }
 
-/* general */
 .top-buffer { margin-top:20px; }
 
 .text-tab {
@@ -32,23 +49,33 @@ body {
 .navbar {
     border-radius: 0;
     width: 100%;
+    height: 30px;
 }
 
 /* footer section related */
 #footer {
     background-color: #3e3f3a;
     color: #ffffff;
-    width: inherit;
 }
 
-/* SideBar */
+
+/*  ---------------------------------------------------------------------------------------------------
+    --------------------------------------------- Side Bar --------------------------------------------
+    --------------------------------------------------------------------------------------------------- */
+
 #sideBar {
-    height: 100%;
+    height: calc(100% - 31px);
+    width: 300px;
+    overflow: auto;
     border-right: 1px solid #3e3f3a;
+    float:left;
+    position: fixed;
+    margin-top: 16px;
 }
 
 #menuItemsWrapper {
     margin-left: 15px;
+    margin-right: 15px;
     border-radius: 5px;
 }
 
@@ -78,14 +105,82 @@ body {
 }
 
 
+/*  ---------------------------------------------------------------------------------------------------
+    ------------------------------------------ Main Content -------------------------------------------
+    --------------------------------------------------------------------------------------------------- */
 
+#mainBody {
+    z-index: 1000;
+    width: calc(100% - 330px);
+    float:right;
+    margin-left: 15px;
+    margin-right: 13px;
+}
 
+.materialTable {
+    border-radius: 5px;
+    font-size: 12px;
+}
 
+.materialTable > div {
+    height: 30px;
+    padding-top: 5px;
+}
 
-/* main content related */
-.divider-vertical {
-    height: 50px;
-    margin: 0 9px;
-    border-left: 1px solid #F2F2F2;
-    border-right: 1px solid #FFF;
+.materialTable tr {
+    height: 10px;
+    padding-top: 5px;
+}
+
+.materialTable a {
+    color: black;
+    font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 1.42857143;
+    color: #3e3f3a;
+}
+
+.tableBlackBorder {
+    border: 1px solid #3e3f3a;
+}
+
+.addTableItem {
+    height: 41px;
+    border-top: 1px solid #3e3f3a;
+    padding-top: 9px;
+}
+
+#addMaterialElement {
+    z-index: 9999;
+    position: fixed;
+    height: 550px;
+    width: 400px;
+    top: calc(50% - 275px);
+    left: calc(50% - 200px);
+    background-color: white;
+    border: 1px solid #3e3f3a;
+    border-radius: 20px;
+    display: none;
+}
+
+#addMaterialElement h2 {
+    text-align: center;
+}
+
+#addMaterialElement form {
+    padding: 20px 20px 20px 20px;
+}
+
+#addMaterialElement label {
+    padding-top: 7px;
+}
+
+#addMaterialElement input, label, select {
+    height: 35px;
+}
+
+#addMaterialElement select {
+    background-color: white;
+    border-radius: 3px;
+    margin-left: 15px;
+    width: 228px;
 }
