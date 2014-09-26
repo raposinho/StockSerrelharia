@@ -21,11 +21,6 @@
 
         <!-- base layout -->
         <div id="bodyWrapper">
-            <!--<nav class="navbar navbar-default" role="navigation">-->
-                <!--<div class="navbar-header" id="navbarBrand">-->
-                    <!--<a class="navbar-brand" href="/">Stock Tracker</a>-->
-                <!--</div>-->
-            <!--</nav>-->
             <div class="contentWrapper">
                 <div id="sideBar">
                     <div id="menuItemsWrapper" data-bind="template: { name: mainMenuItemDisplayMode, foreach: menuItems }"></div>
@@ -36,20 +31,20 @@
                 <!-- divs that should overwrite all content -->
                 <div id="wholeScreenOpacity"></div>
                 <div id="addMaterialElement">
-                    <h2>Adicionar novo item em <span id="spanHeaderLocation"></span></h2>
+                    <h2>Adicionar novo item em <span id="addMaterialSectionTitle"></span></h2>
                     <form role="form">
                         <div>
                             <div>
                                 <div class="form-group row">
                                     <label for="materialDisplayNameForm" class="col-md-4">Identificador</label>
                                     <div class="col-md-8">
-                                        <input type="text" value='david' class="form-control" id="materialDisplayNameForm">
+                                        <input type="text" name="displayName" class="form-control" id="materialDisplayNameForm">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="minimumStockAddForm" class="col-md-6">Stock mínimo (alerta)</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" id="minimumStockAddForm">
+                                        <input type="text" class="form-control" name="minimumStock" id="minimumStockAddForm">
                                     </div>
                                 </div>
                             </div>
@@ -58,31 +53,32 @@
                                 <div class="form-group row">
                                     <label for="actualStockAddForm" class="col-md-6">Stock Actual</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" value="0" id="actualStockAddForm">
+                                        <input type="text" class="form-control" value="0" name='actualStock' id="actualStockAddForm">
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="originSupplierAddForm" class="col-md-4">Fornecedor</label>
-                                <select id="originSupplierAddForm" class="col-md-8">
+                                <select id="originSupplierAddForm" class="col-md-8" name="originalSupplier">
                                     <option>N/A</option>
                                     <option>porto</option>
                                 </select>
                             </div>
-                            <div id="supplierDepedentSectionAddForm">
+                            <div id="supplierDependentSectionAddForm">
                                 <div class="form-group row">
                                     <label for="boughtPriceAddForm" class="col-md-6">Preço de Compra</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" value="0" id="boughtPriceAddForm" disabled>
+                                        <input type="text" class="form-control" value="0" name="salePrice" id="boughtPriceAddForm" disabled>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="originSupplierAddForm" class="col-md-6">Desconto</label>
+                                    <label for="discountAddForm" class="col-md-6">Desconto</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" value="0" id="originSupplierAddForm" disabled>
+                                        <input type="text" class="form-control" value="0" name="discount" id="discountAddForm" disabled>
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" name="ownerSection" id="ownerSectionAddForm">
                             <div class="row">
                                 <div class="form-group col-md-4 col-sm-offset-1">
                                     <button type="submit" class="btn btn-default" id="addMaterialSaveButton">Gravar item</button>
@@ -94,9 +90,70 @@
                         </div>
                     </form>
                 </div>
-                <!--<div id="footer" class="navbar navbar-inner  navbar-fixed-bottom">-->
-                    <!--<p class="muted credit top-buffer text-center">@ 2014 Stock Tracker</p>-->
-                <!--</div>-->
+                <div id="editMaterialElement">
+                    <h2>Modificar <span id="editMaterialSectionTitle">M3aaaaa</span> de <span id="editMaterialItemTitle">Quadrados</span></h2>
+                    <form role="form">
+                        <div>
+                            <div class="form-group row">
+                                <label for="minimumStockAddForm" class="col-md-6">Stock mínimo (alerta)</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" name="minimumStock" id="minimumStockAddForm">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="horizontalSeperator"></div>
+                        <div class="form-group row">
+                            <label for="actualStockAddForm" class="col-md-6">Stock Actual</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="actualStockAddForm" disabled>
+                            </div>
+                        </div>
+                        <h4>Remover Stock</h4>
+                        <div class="form-group row">
+                            <label for="actualStockAddForm" class="col-md-6">Quantidade a remover</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="actualStockAddForm">
+                            </div>
+                        </div>
+                        <h4>Adicionar Stock</h4>
+                        <div class="form-group row">
+                            <label for="actualStockAddForm" class="col-md-6">Quantidade a adicionar</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="actualStockAddForm">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="originSupplierAddForm" class="col-md-5">Fornecedor</label>
+                            <select id="originSupplierEditForm" class="col-md-7" name="originalSupplier">
+                                <option>N/A</option>
+                                <option>porto</option>
+                            </select>
+                        </div>
+                        <div id="supplierDependentSectionEditForm">
+                            <div class="form-group row">
+                                <label for="boughtPriceAddForm" class="col-md-5">Preço de Compra</label>
+                                <div class="col-md-7">
+                                    <input type="text" class="form-control" value="0" name="salePrice" id="boughtPriceAddForm" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="discountAddForm" class="col-md-5">Desconto</label>
+                                <div class="col-md-7">
+                                    <input type="text" class="form-control" value="0" name="discount" id="discountAddForm" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="ownerSection" id="ownerSectionEditForm">
+                        <div class="row">
+                            <div class="form-group col-md-4 col-sm-offset-1">
+                                <button type="submit" class="btn btn-default" id="addMaterialSaveButton">Modificar item</button>
+                            </div>
+                            <div class="form-group col-md-4 col-sm-offset-1">
+                                <button type="submit" class="btn btn-default" id="editMaterialCancelButton">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -163,6 +220,10 @@
             <div data-bind="template: { name: subContentDisplayMode, foreach: subContent }"></div>
         </script>
 
+        <script id="materialIntermediarySectionTemplate" type="text/html">
+            <div data-bind="template: { name: subContentDisplayMode, foreach: subContent }"></div>
+        </script>
+
         <script id="materialFinalSectionTemplate" type="text/html">
             <div class="panel panel-default text-center tableBlackBorder materialTable"
                  data-bind="attr: {'id': appId}">
@@ -184,17 +245,13 @@
             </div>
         </script>
 
-        <script id="materialIntermediarySectionTemplate" type="text/html">
-            <div data-bind="template: { name: subContentDisplayMode, foreach: subContent }"></div>
-        </script>
-
         <script id="materialFinalSectionRowTemplate" type="text/html">
             <tr>
                 <td data-bind="text: displayName"></td>
                 <td data-bind="text: minimumStock"></td>
                 <td data-bind="text: actualStock"></td>
                 <td data-bind="text: salePrice"></td>
-                <td><a>Editar</a></td>
+                <td><a data-bind="click: activateEditForm">Editar</a></td>
                 <td><a>Detalhes</a></td>
             </tr>
         </script>

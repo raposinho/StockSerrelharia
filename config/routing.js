@@ -21,7 +21,11 @@ function ensureAjax(req, res, next) {
 
 function applyRoutes(router) {
     router.get('/menuItems', ensureAjax, homeController.getMenuItems);
+
+    // materials
     router.get('/material/:type', ensureAjax, materialController.getMaterialContent);
+    router.post('/material/insertMaterialItem', ensureAjax, materialController.insertMaterialItem);
+
     router.get('*', function(req, res) {
         showHomePage(req, res);
     });

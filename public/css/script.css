@@ -16,6 +16,10 @@ html, body, #bodyWrapper {
     color: #c9302c;
 }
 
+input[type="text"]:disabled {
+    background: #eeeeee;
+}
+
 .horizontalSeperator {
     width: 80%;
     left: auto;
@@ -162,25 +166,46 @@ html, body, #bodyWrapper {
     display: none;
 }
 
-#addMaterialElement h2 {
+#editMaterialElement {
+    z-index: 9999;
+    position: fixed;
+    height: 625px;
+    width: 400px;
+    top: calc(50% - 312px);
+    left: calc(50% - 200px);
+    background-color: white;
+    border: 1px solid #3e3f3a;
+    border-radius: 20px;
+    display: none;
+}
+
+#addMaterialElement h2, #editMaterialElement h2, #editMaterialElement h4 {
     text-align: center;
 }
 
-#addMaterialElement form {
-    padding: 20px 20px 20px 20px;
+#addMaterialElement form, #editMaterialElement form {
+    padding: 0px 20px 0px 20px;
 }
 
-#addMaterialElement label {
+#addMaterialElement label, #editMaterialElement label {
     padding-top: 7px;
 }
 
-#addMaterialElement input, label, select {
+#addMaterialElement input, #addMaterialElement label, #addMaterialElement select,
+#editMaterialElement input, #editMaterialElement label, #editMaterialElement select {
     height: 35px;
 }
 
-#addMaterialElement select {
+#addMaterialElement select, #editMaterialElement select {
     background-color: white;
     border-radius: 3px;
     margin-left: 15px;
+}
+
+#addMaterialElement select {
     width: 228px;
+}
+
+#editMaterialElement select {
+    width: 197px;
 }

@@ -176,7 +176,11 @@ MaterialMainContent.prototype = new MainContentObjectWithSections();
 
 function MaterialFinalSection(parent, contentObject) {
     MainContentObject.call(this, parent, contentObject.appId, contentObject.displayName, 'materialFinalSectionTemplate');
-    this.items = contentObject.items;
+    this.items = (function(curObj) {
+        return ko.observableArray(contentObject.items.map(function(item) {
+            return new MaterialItem(curObj, item);
+        }).sort(materialSort));
+    })(this);
     this.fullDisplayName = (function(finalSection) {
         var fullName = '';
         var cur = finalSection;
@@ -192,5 +196,22 @@ function MaterialFinalSection(parent, contentObject) {
     this.activateAdditionForm = function() {
         activateAddMaterialForm(this);
     };
+    this.addElement = (function(curObj) {
+        return function(addedObject) {
+            this.items.push(new MaterialItem(curObj, addedObject));
+            this.items.sort(materialSort);
+        };
+    })();
 }
 MaterialFinalSection.prototype = new MainContentObject();
+
+function MaterialItem(parent, item) {
+    MainContentObject.call(this, parent, item.appId, item.displayName);
+    this.salePrice = ko.observable(item.salePrice);
+    this.actualStock = ko.observable(item.actualStock);
+    this.minimumStock = ko.observable(item.minimumStock);
+    this.activateEditForm = function() {
+        activateEditMaterialForm(this);
+    };
+}
+MaterialItem.prototype = new MainContentObject();

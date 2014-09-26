@@ -1,5 +1,15 @@
 module.exports = {
+    insertMaterialItem: insertMaterialItem,
     getMaterialContent: getMaterialContent
+}
+
+function insertMaterialItem(req, res) {
+    console.log(req.body);
+    var ret = req.body;
+    ret.appId = '20';
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(ret));
 }
 
 function getMaterialContent(req, res) {
@@ -69,8 +79,11 @@ var parafusosValues = {
                         { displayName: '6mm', minimumStock: 10, actualStock: 20, salePrice: 50},
                         { displayName: '8mm', minimumStock: 10, actualStock: 20, salePrice: 50},
                         { displayName: '10mm', minimumStock: 10, actualStock: 20, salePrice: 50},
-                        { displayName: '12mm', minimumStock: 10, actualStock: 20, salePrice: 50},
-                        { displayName: '14mm', minimumStock: 10, actualStock: 20, salePrice: 50}
+                        { displayName: 'M23 - 16mm', minimumStock: 10, actualStock: 20, salePrice: 50},
+                        { displayName: 'M23 - 12mm', minimumStock: 10, actualStock: 20, salePrice: 50},
+                        { displayName: 'M23 - 122', minimumStock: 10, actualStock: 20, salePrice: 50},
+                        { displayName: 'M23 - 14', minimumStock: 10, actualStock: 20, salePrice: 50}
+
                     ]
                 }
             ]
