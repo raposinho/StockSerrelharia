@@ -169,14 +169,44 @@ input[type="text"]:disabled {
 #editMaterialElement {
     z-index: 9999;
     position: fixed;
-    height: 625px;
-    width: 400px;
-    top: calc(50% - 312px);
-    left: calc(50% - 200px);
+    height: 525px;
+    width: 900px;
+    top: calc(50% - 262px);
+    left: calc(50% - 450px);
     background-color: white;
     border: 1px solid #3e3f3a;
     border-radius: 20px;
     display: none;
+}
+
+#editMaterialElement .horizontalSeperator {
+    width: 100%;
+    margin-left: 0%;
+    margin-right: 0%;
+}
+
+.editMaterialLeftSide {
+    width: 450px;
+    float: left;
+}
+
+.editMaterialRightSide {
+    width: 450px;
+    float: right;
+}
+
+#editMaterialReplaceDivision {
+    height:50px;
+}
+
+#editMaterialButtonDivision {
+    height:252px;
+    padding-top: 15px;
+}
+
+#editMaterialAddStockSection {
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 #addMaterialElement h2, #editMaterialElement h2, #editMaterialElement h4 {
@@ -198,7 +228,7 @@ input[type="text"]:disabled {
 
 #addMaterialElement select, #editMaterialElement select {
     background-color: white;
-    border-radius: 3px;
+    border-radius: 5px;
     margin-left: 15px;
 }
 
@@ -207,5 +237,5 @@ input[type="text"]:disabled {
 }
 
 #editMaterialElement select {
-    width: 197px;
+    width: 234px;
 }
