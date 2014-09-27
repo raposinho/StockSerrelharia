@@ -22,6 +22,11 @@ var materiais = {
     appId: 9,
     subSections: [
         {
+            displayName: 'argolas',
+            appId:2,
+            subSections: [ { displayName: 'Hexagonais', appId:'2a' } ]
+        },
+        {
             displayName: 'Parafusos',
             appId:5,
             subSections: [ {
@@ -42,11 +47,6 @@ var materiais = {
                     ]
                 }
             ]
-        },
-        {
-            displayName: 'Porcas',
-            appId:2,
-            subSections: [ { displayName: 'Hexagonais', appId:'2a' } ]
         },
         {
             displayName: 'Sprays',

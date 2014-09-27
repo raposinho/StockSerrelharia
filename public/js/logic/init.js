@@ -39,24 +39,3 @@
         }
     });
 })();
-
-
-
-
-function loadContent() {
-
-    applyFormEvents();
-
-    //getMenuItems
-    $.ajax({
-        url: '/menuItems',
-        type: 'GET',
-        data: {
-            format: 'json'
-        },
-        success: function(menuContent) {
-            viewModel.setMenuItems(menuContent);
-            ko.applyBindings(viewModel);
-        }
-    });
-}

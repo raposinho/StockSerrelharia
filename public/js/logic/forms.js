@@ -1,6 +1,10 @@
 var formHandlers;
+var alreadyExistsDiv;
+var wholeScreenOpacity;
 
 function applyFormEvents() {
+    wholeScreenOpacity = $('#wholeScreenOpacity');
+
     var addMaterial = $('#addMaterialElement');
     var editMaterial = $('#editMaterialElement');
     formHandlers = {
@@ -24,7 +28,7 @@ function applyFormEvents() {
         // add cancel action
         item.formWrapper.find(item.cancelButton).on('click', function(e) {
             e.preventDefault();
-            $('#wholeScreenOpacity').hide();
+            wholeScreenOpacity.hide();
             item.formWrapper.hide();
         });
 
@@ -40,7 +44,12 @@ function applyFormEvents() {
         });
     });
 
-    addMaterial.find('#addMaterialSaveButton').on('click', saveFormClickFunction(addMaterial, function(e, postObj) {
+    alreadyExistsDiv = $('#messageDiv');
+    alreadyExistsDiv.find('button').on('click', function() {
+        alreadyExistsDiv.hide();
+    });
+
+    addMaterial.find('#addMaterialSaveButton').on('click', materialRelatedSaveFormClickFunction(addMaterial, function(e, postObj) {
         validateFormStringNotEmpty(addMaterial, 'materialDisplayNameAddForm', postObj);
         validateFormInteger(addMaterial, 'minimumStockAddForm', postObj);
         validateFormInteger(addMaterial, 'actualStockAddForm', postObj);
@@ -51,12 +60,15 @@ function applyFormEvents() {
         mainContentHandlers.handlers['Material'].addItemToView(addedObject);
     }));
 
-    editMaterial.find('#editMaterialSaveButton').on('click', saveFormClickFunction(editMaterial, function(e, postObj) {
+    editMaterial.find('#editMaterialSaveButton').on('click', materialRelatedSaveFormClickFunction(editMaterial, function(e, postObj) {
         validateFormStringNotEmpty(editMaterial, 'materialDisplayNameEditForm', postObj);
         validateFormInteger(editMaterial, 'minimumStockEditForm', postObj);
         var increasingStock;
         if(editMaterial.find('#increaseStockEditForm').val() !== '') {
             validateFormInteger(editMaterial, 'increaseStockEditForm', postObj);
+            validateFormSelect(editMaterial, 'originSupplierEditForm', postObj);
+            validateFormDouble(editMaterial, 'boughtPriceEditForm', postObj);
+            validateFormDouble(editMaterial, 'discountEditForm', postObj);
             increasingStock = true;
         }
         if(editMaterial.find('#decreaseStockEditForm').val() !== '') {
@@ -66,15 +78,23 @@ function applyFormEvents() {
                 postObj.isValid = false;
             }
         }
-        validateFormSelect(editMaterial, 'originSupplierEditForm', postObj);
-        validateFormDouble(editMaterial, 'boughtPriceEditForm', postObj);
-        validateFormDouble(editMaterial, 'discountEditForm', postObj);
+        postObj.postContent['originalDisplayName'] = editMaterial.find('#originalDisplayNameEditForm').val();
     }, '#ownerSectionEditForm', '/material/editMaterialItem', function(editedObject) {
         mainContentHandlers.handlers['Material'].applyModificationsToItemOnView(editedObject);
     }));
 }
 
-function saveFormClickFunction(form, intermediaryValidations, ownerSectionIdSelector, postUrl, successCallback) {
+function materialRelatedSaveFormClickFunction(form, intermediaryValidations, ownerSectionIdSelector, postUrl, successCallback) {
+    return saveFormClickFunction(form, intermediaryValidations, ownerSectionIdSelector, postUrl, function(postObj, jqXHR) {
+        if(jqXHR.status == 403) {
+            var item = mainContentHandlers.handlers['Material'].searchRightElement(postObj.postContent.sectionInformation);
+            var section = item instanceof MaterialItem ? item.parent : item;
+            activateAlreadyExistsDiv('Já existe material com nome ' + postObj.postContent.displayName + ' em ' + section.fullDisplayName, 'alreadyExistsError');
+        }
+    }, successCallback);
+}
+
+function saveFormClickFunction(form, intermediaryValidations, ownerSectionIdSelector, postUrl, errorCallback, successCallback) {
     return function(e) {
         e.preventDefault();
         // reset any red colored errors
@@ -91,9 +111,14 @@ function saveFormClickFunction(form, intermediaryValidations, ownerSectionIdSele
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(postObj.postContent),
                 dataType: "json",
+                error: function(jqXHR, textStatus, errorThrown) {
+                    if(errorCallback) {
+                        errorCallback(postObj, jqXHR, textStatus, errorThrown);
+                    }
+                },
                 success: function(addedObject) {
                     successCallback(addedObject);
-                    $('#wholeScreenOpacity').hide();
+                    wholeScreenOpacity.hide();
                     form.hide();
                 }
             });
@@ -145,8 +170,6 @@ function commonAddAndEditMaterialFormPreparations(form, sectionObject, ownerSect
     // reset any red colored errors
     form.find('label[class*="formErrorColor"]').removeClass('formErrorColor');
 
-    form.find(sectionTitleSelector).text(sectionObject.fullDisplayName);
-
     // set section information (array of id's since type)
     var sectionInformation = (function() {
         var allParentIds = [];
@@ -176,6 +199,8 @@ function commonAddAndEditMaterialFormPreparations(form, sectionObject, ownerSect
 function activateAddMaterialForm(sectionObject) {
     var form = formHandlers.addMaterial;
 
+    form.find('#addMaterialSectionTitle').text(sectionObject.fullDisplayName);
+
     // reset values
     var wrapperFormDiv = $('#addMaterialElement').find('form > div');
     var obligatoryInputs = wrapperFormDiv.find('>:first-child input');
@@ -183,17 +208,19 @@ function activateAddMaterialForm(sectionObject) {
     obligatoryInputs.get(1).value = '0';
     wrapperFormDiv.find('>:nth-child(n+2) input').val('0');
 
-    commonAddAndEditMaterialFormPreparations(form, sectionObject, '#ownerSectionAddForm', '#originSupplierAddForm', '#addMaterialSectionTitle');
+    commonAddAndEditMaterialFormPreparations(form, sectionObject, '#ownerSectionAddForm', '#originSupplierAddForm');
 }
 
 function activateEditMaterialForm(itemObject) {
     var form = formHandlers.editMaterial;
 
     // set values based on item
+    form.find('#editMaterialSectionTitle').text(itemObject.parent.fullDisplayName);
     form.find('#editMaterialItemTitle').text(itemObject.displayName());
     form.find('#materialDisplayNameEditForm').val(itemObject.displayName());
     form.find('#minimumStockEditForm').val(itemObject.minimumStock());
     form.find('#actualStockEditForm').val(itemObject.actualStock());
+    form.find('#originalDisplayNameEditForm').val(itemObject.displayName());
 
     // reset values
     form.find('#decreaseStockEditForm').val('');
@@ -201,5 +228,12 @@ function activateEditMaterialForm(itemObject) {
     formIncreaseStockSection.find('input').val('0');
     formIncreaseStockSection.find('#increaseStockEditForm').val('');
 
-    commonAddAndEditMaterialFormPreparations(form, itemObject.parent, '#ownerSectionEditForm', '#originSupplierEditForm', '#editMaterialSectionTitle');
+    commonAddAndEditMaterialFormPreparations(form, itemObject, '#ownerSectionEditForm', '#originSupplierEditForm');
+}
+
+function activateAlreadyExistsDiv(msg, classToSet) {
+    alreadyExistsDiv.removeClass();
+    alreadyExistsDiv.addClass(classToSet);
+    alreadyExistsDiv.find('p').text(msg);
+    alreadyExistsDiv.show();
 }

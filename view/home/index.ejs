@@ -33,6 +33,10 @@
                 </div>
                 <!-- divs that should overwrite all content -->
                 <div id="wholeScreenOpacity"></div>
+                <div id="messageDiv" class="alreadyExistsError">
+                    <p>Já existe Material com nome M3 1000x1000mm em Quadrados-Metalizado</p>
+                    <button class="btn btn-default">Fechar</button>
+                </div>
                 <div id="addMaterialElement">
                     <h2>Adicionar novo item em <span id="addMaterialSectionTitle"></span></h2>
                     <form role="form">
@@ -153,6 +157,7 @@
                             </div>
                         </div>
                         <input type="hidden" name="ownerSection" id="ownerSectionEditForm">
+                        <input type="hidden" name="originalDisplayName" id="originalDisplayNameEditForm">
                         <div class="horizontalSeperator" id="editMaterialButtonDivision"></div>
                         <div id="editMaterialButtonSection">
                             <div class="form-group col-md-2 col-md-offset-2">
@@ -247,7 +252,7 @@
                             <td>Preço de Venda</td>
                         </tr>
                     </thead>
-                    <tbody data-bind="template: {name: 'materialFinalSectionRowTemplate', foreach: items}"></tbody>
+                    <tbody data-bind="template: {name: 'materialFinalSectionRowTemplate', foreach: subContent}"></tbody>
                 </table>
                 <div class="addTableItem">
                     <a data-bind="click: activateAdditionForm">Adicionar novo item</a>

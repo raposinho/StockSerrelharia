@@ -239,3 +239,24 @@ input[type="text"]:disabled {
 #editMaterialElement select {
     width: 234px;
 }
+
+.alreadyExistsError {
+    z-index: 10000;
+    position: fixed;
+    width: 380px;
+    top: calc(50% - 60px);
+    left: calc(50% - 190px);
+    background-color: white;
+    border: 1px solid #3e3f3a;
+    border-radius: 20px;
+    padding: 20px 20px 20px 20px;
+}
+
+#messageDiv {
+    text-align: center;
+    display: none;
+}
+
+#messageDiv button {
+    margin-top: 10px;
+}

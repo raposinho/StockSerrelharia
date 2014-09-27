@@ -25,6 +25,7 @@ function applyRoutes(router) {
     // materials
     router.get('/material/:type', ensureAjax, materialController.getMaterialContent);
     router.post('/material/insertMaterialItem', ensureAjax, materialController.insertMaterialItem);
+    router.post('/material/editMaterialItem', ensureAjax, materialController.editMaterialItem);
 
     router.get('*', function(req, res) {
         showHomePage(req, res);

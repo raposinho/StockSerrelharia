@@ -53,7 +53,7 @@ MaterialMainContent.prototype = new MainContentObjectWithSections();
 
 function MaterialFinalSection(parent, contentObject) {
     MainContentObject.call(this, parent, contentObject.appId, contentObject.displayName, 'materialFinalSectionTemplate');
-    this.items = (function(curObj) {
+    this.subContent = (function(curObj) {
         return ko.observableArray(contentObject.items.map(function(item) {
             return new MaterialItem(curObj, item);
         }).sort(materialSort));
@@ -75,10 +75,10 @@ function MaterialFinalSection(parent, contentObject) {
     };
     this.addElement = (function(curObj) {
         return function(addedObject) {
-            this.items.push(new MaterialItem(curObj, addedObject));
-            this.items.sort(materialSort);
+            this.subContent.push(new MaterialItem(curObj, addedObject));
+            this.subContent.sort(materialSort);
         };
-    })();
+    })(this);
 }
 MaterialFinalSection.prototype = new MainContentObject();
 
@@ -91,5 +91,13 @@ function MaterialItem(parent, item) {
     this.activateEditForm = function() {
         activateEditMaterialForm(this);
     };
+    this.editInformation = (function(curObj) {
+        return function(editedInformation) {
+            curObj.displayName(editedInformation.displayName);
+            curObj.minimumStock(editedInformation.minimumStock);
+            curObj.salePrice(editedInformation.salePrice);
+            curObj.actualStock(editedInformation.actualStock);
+        }
+    })(this);
 }
 MaterialItem.prototype = new MainContentObject();
