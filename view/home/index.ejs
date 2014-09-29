@@ -11,6 +11,7 @@
         <script type="application/javascript" src="/js/jquery-2.1.1.min.js"></script>
         <script type="application/javascript" src="/js/bootstrap.min.js"></script>
         <script type="application/javascript" src="/js/knockout-3.2.0.js"></script>
+        <script type="application/javascript" src="/js/lodash.min.js"></script>
         <script type="application/javascript" src="/js/logic/init.js"></script>
         <script type="application/javascript" src="/js/logic/forms.js"></script>
         <script type="application/javascript" src="/js/logic/handlerContent.js"></script>
@@ -24,7 +25,7 @@
     <body>
         <!-- base layout -->
         <div id="bodyWrapper">
-            <div class="contentWrapper">
+            <div id="contentWrapper">
                 <div id="sideBar">
                     <div id="menuItemsWrapper" data-bind="template: { name: mainMenuItemDisplayMode, foreach: menuItems }"></div>
                 </div>
@@ -33,6 +34,7 @@
                 </div>
                 <!-- divs that should overwrite all content -->
                 <div id="wholeScreenOpacity"></div>
+                <div data-bind="template: { name: detailsMaterialItemDisplayMode, data: detailsOwnerMaterialItem }"></div>
                 <div id="messageDiv" class="alreadyExistsError">
                     <p>Já existe Material com nome M3 1000x1000mm em Quadrados-Metalizado</p>
                     <button class="btn btn-default">Fechar</button>
@@ -54,6 +56,12 @@
                                         <input type="text" class="form-control" name="minimumStock" id="minimumStockAddForm">
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label for="salePriceAddForm" class="col-md-6">Preço de venda</label>
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" name="salePrice" id="salePriceAddForm">
+                                    </div>
+                                </div>
                             </div>
                             <div class="horizontalSeperator"></div>
                             <div>
@@ -64,30 +72,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label for="originSupplierAddForm" class="col-md-4">Fornecedor</label>
-                                <select id="originSupplierAddForm" class="col-md-8" name="originalSupplier"></select>
-                            </div>
-                            <div id="supplierDependentSectionAddForm">
-                                <div class="form-group row">
-                                    <label for="boughtPriceAddForm" class="col-md-6">Preço de Compra</label>
-                                    <div class="col-md-6">
-                                        <input type="text" class="form-control" value="0" name="salePrice" id="boughtPriceAddForm" disabled>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="discountAddForm" class="col-md-6">Desconto</label>
-                                    <div class="col-md-6">
-                                        <input type="text" class="form-control" value="0" name="discount" id="discountAddForm" disabled>
-                                    </div>
-                                </div>
-                            </div>
                             <input type="hidden" name="ownerSection" id="ownerSectionAddForm">
                             <div class="row">
                                 <div class="form-group col-md-4 col-sm-offset-1">
                                     <button type="submit" class="btn btn-default" id="addMaterialSaveButton">Gravar item</button>
                                 </div>
-                                <div class="form-group col-md-4 col-sm-offset-1">
+                                <div class="form-group col-md-4 col-sm-offset-2">
                                     <button type="submit" class="btn btn-default" id="addMaterialCancelButton">Cancelar</button>
                                 </div>
                             </div>
@@ -119,10 +109,16 @@
                                     <input type="text" class="form-control" name="actualStock" id="actualStockEditForm" disabled>
                                 </div>
                             </div>
+                            <div>
+                                <label for="salePriceEditForm" class="col-md-3">Preço de Venda</label>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" name="actualStock" id="salePriceEditForm">
+                                </div>
+                            </div>
                         </div>
                         <div class="editMaterialLeftSide row form-group">
                             <h4>Remover Stock</h4>
-                            <div >
+                            <div>
                                 <label for="decreaseStockEditForm" class="col-md-6">Quantidade a remover</label>
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" name="decreaseAmount" id="decreaseStockEditForm">
@@ -143,7 +139,7 @@
                             </div>
                             <div id="supplierDependentSectionEditForm">
                                 <div class="form-group row">
-                                    <label for="boughtPriceEditForm" class="col-md-5">Preço de Compra</label>
+                                    <label for="boughtPriceEditForm" class="col-md-5">Preço Total</label>
                                     <div class="col-md-7">
                                         <input type="text" class="form-control" value="0" name="salePrice" id="boughtPriceEditForm" disabled>
                                     </div>
@@ -153,6 +149,20 @@
                                     <div class="col-md-7">
                                         <input type="text" class="form-control" value="0" name="discount" id="discountEditForm" disabled>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="displayUnitaryPriceEditFormSection" class="editMaterialLeftSide row form-group">
+                            <div class="form-group row">
+                                <label for="unitaryPriceEditForm" class="col-md-6">Preço Unitário Tabela</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" name="increaseAmount" id="unitaryPriceEditForm" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="unitaryPriceDiscountEditForm" class="col-md-6">Preço Unitário c/ Desconto</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" name="increaseAmount" id="unitaryPriceDiscountEditForm" disabled>
                                 </div>
                             </div>
                         </div>
@@ -240,14 +250,12 @@
         </script>
 
         <script id="materialFinalSectionTemplate" type="text/html">
-            <div class="panel panel-default text-center tableBlackBorder materialTable"
-                 data-bind="attr: {'id': appId}">
+            <div class="panel panel-default text-center tableBlackBorder materialTable" data-bind="attr: {'id': appId}">
                 <div class="panel-heading" data-bind="text: fullDisplayName"></div>
                 <table class="table" rules="cols">
                     <thead>
                         <tr>
                             <td></td>
-                            <td>Stock Mínimo</td>
                             <td>Stock Actual</td>
                             <td>Preço de Venda</td>
                         </tr>
@@ -263,11 +271,57 @@
         <script id="materialFinalSectionRowTemplate" type="text/html">
             <tr>
                 <td data-bind="text: displayName"></td>
-                <td data-bind="text: minimumStock"></td>
                 <td data-bind="text: actualStock"></td>
                 <td data-bind="text: salePrice"></td>
                 <td><a data-bind="click: activateEditForm">Editar</a></td>
                 <td><a>Detalhes</a></td>
+            </tr>
+        </script>
+
+        <script id="materialItemDetails" type="text/html">
+            <div id="itemDetailsDiv">
+                <h4>Detalhes de <span data-bind="text: displayName"/> em <span data-bind="text: parent.fullDisplayName"/></h4>
+                <div class="panel panel-default text-center tableBlackBorder materialTable">
+                    <div class="panel-heading">Ultimas transacções de cada Fornecedor</div>
+                    <table class="table" rules="cols">
+                        <thead>
+                        <tr>
+                            <td>Fornecedor</td>
+                            <td>Quantidade</td>
+                            <td>Preço Tabela</td>
+                            <td>Desconto</td>
+                            <td>Preço c/ Desconto</td>
+                            <td>Preço Unitário Tabela</td>
+                            <td>Preço Unitário c/ Desconto</td>
+                            <td>Data</td>
+                        </tr>
+                        </thead>
+                        <tbody data-bind="template: {name: 'detailsLatestEntryTemplate', foreach: latestInformation }"></tbody>
+                    </table>
+                </div>
+                <div>
+                    <div id="editMaterialButtonSection">
+                        <div class="form-group col-md-2 col-md-offset-2">
+                            <button type="submit" class="btn btn-default" id="editMaterialSaveButton">Verificar todas as transacções</button>
+                        </div>
+                        <div class="form-group col-md-2 col-md-offset-4">
+                            <button type="submit" class="btn btn-default" id="editMaterialCancelButton">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+
+        <script id="detailsLatestEntryTemplate" type="text/html">
+            <tr>
+                <td data-bind="text: supplier, css: colorClass"></td>
+                <td data-bind="text: quantity"></td>
+                <td data-bind="text: totalPrice"></td>
+                <td data-bind="text: discount"></td>
+                <td data-bind="text: totalPriceDiscount"></td>
+                <td data-bind="text: salePrice"></td>
+                <td data-bind="text: salePriceDiscount"></td>
+                <td data-bind="text: date"></td>
             </tr>
         </script>
     </body>

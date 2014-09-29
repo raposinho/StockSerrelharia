@@ -3,7 +3,7 @@ html, body, #bodyWrapper {
     width: 100%;
 }
 
-.contentWrapper {
+#contentWrapper {
     height: calc(100% - 101px);
     margin-right: 5px;
 }
@@ -156,9 +156,9 @@ input[type="text"]:disabled {
 #addMaterialElement {
     z-index: 9999;
     position: fixed;
-    height: 550px;
+    /*height: 395px;*/
     width: 400px;
-    top: calc(50% - 275px);
+    top: calc(50% - 200px);
     left: calc(50% - 200px);
     background-color: white;
     border: 1px solid #3e3f3a;
@@ -177,6 +177,11 @@ input[type="text"]:disabled {
     border: 1px solid #3e3f3a;
     border-radius: 20px;
     display: none;
+}
+
+#displayUnitaryPriceEditFormSection {
+    padding: 0px 15px 0px 15px;
+    margin-top: 53px;
 }
 
 #editMaterialElement .horizontalSeperator {
@@ -260,3 +265,43 @@ input[type="text"]:disabled {
 #messageDiv button {
     margin-top: 10px;
 }
+
+#itemDetailsDiv {
+    z-index: 9999;
+    position: fixed;
+
+    width: 900px;
+    top: 30px;
+    left: calc(50% - 450px);
+    background-color: white;
+    border: 1px solid #3e3f3a;
+    border-radius: 20px;
+    padding: 0px 20px 0px 20px;
+}
+
+#itemDetailsDiv h4 {
+    text-align: center;
+}
+
+#itemDetailsDiv button {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#itemDetailsDiv .panel {
+    margin-bottom: 15px;
+}
+
+.detailsNormalColor {
+    color: black;
+}
+
+.detailsCheapestColor {
+    color: darkgreen;
+}
+
+.detailsMostExpensiveColor {
+    color: darkred;
+}
+
+

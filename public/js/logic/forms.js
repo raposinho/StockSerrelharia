@@ -35,7 +35,8 @@ function applyFormEvents() {
         // supplier toggle related
         var originSupplierAddForm = item.formWrapper.find(item.selectorSupplier);
         originSupplierAddForm.change(function() {
-            var state = $(originSupplierAddForm.children("option:selected")).val() === '';
+            var value = $(originSupplierAddForm.children("option:selected")).val();
+            var state = value === '' || value === 'Outro';
             var dependentDiv = item.formWrapper.find(item.supplierDependentSelector);
             dependentDiv.find('input').prop('disabled', state);
             if(state === true) {
@@ -50,29 +51,28 @@ function applyFormEvents() {
     });
 
     addMaterial.find('#addMaterialSaveButton').on('click', materialRelatedSaveFormClickFunction(addMaterial, function(e, postObj) {
-        validateFormStringNotEmpty(addMaterial, 'materialDisplayNameAddForm', postObj);
-        validateFormInteger(addMaterial, 'minimumStockAddForm', postObj);
-        validateFormInteger(addMaterial, 'actualStockAddForm', postObj);
-        validateFormSelect(addMaterial, 'originSupplierAddForm', postObj);
-        validateFormDouble(addMaterial, 'boughtPriceAddForm', postObj);
-        validateFormDouble(addMaterial, 'discountAddForm', postObj);
+        validateFormStringNotEmpty(addMaterial, 'materialDisplayNameAddForm', postObj, false);
+        validateFormInteger(addMaterial, 'minimumStockAddForm', postObj, true);
+        validateFormInteger(addMaterial, 'actualStockAddForm', postObj, false);
+        validateFormDouble(addMaterial, 'salePriceAddForm', postObj, true);
     }, '#ownerSectionAddForm', '/material/insertMaterialItem', function(addedObject) {
         mainContentHandlers.handlers['Material'].addItemToView(addedObject);
     }));
 
     editMaterial.find('#editMaterialSaveButton').on('click', materialRelatedSaveFormClickFunction(editMaterial, function(e, postObj) {
-        validateFormStringNotEmpty(editMaterial, 'materialDisplayNameEditForm', postObj);
-        validateFormInteger(editMaterial, 'minimumStockEditForm', postObj);
+        validateFormStringNotEmpty(editMaterial, 'materialDisplayNameEditForm', postObj, false);
+        validateFormInteger(editMaterial, 'minimumStockEditForm', postObj, true);
+        validateFormDouble(editMaterial, 'salePriceEditForm', postObj, true);
         var increasingStock;
         if(editMaterial.find('#increaseStockEditForm').val() !== '') {
-            validateFormInteger(editMaterial, 'increaseStockEditForm', postObj);
-            validateFormSelect(editMaterial, 'originSupplierEditForm', postObj);
-            validateFormDouble(editMaterial, 'boughtPriceEditForm', postObj);
-            validateFormDouble(editMaterial, 'discountEditForm', postObj);
+            validateFormInteger(editMaterial, 'increaseStockEditForm', postObj, false);
+            validateFormSelect(editMaterial, 'originSupplierEditForm', postObj, false);
+            validateFormDouble(editMaterial, 'boughtPriceEditForm', postObj, false);
+            validateFormDoubleWithMax(editMaterial, 'discountEditForm', postObj, false, 100);
             increasingStock = true;
         }
         if(editMaterial.find('#decreaseStockEditForm').val() !== '') {
-            validateFormInteger(editMaterial, 'decreaseStockEditForm', postObj);
+            validateFormInteger(editMaterial, 'decreaseStockEditForm', postObj, false);
             if(increasingStock === true) {
                 editMaterial.find('label[for="increaseStockEditForm"], label[for="decreaseStockEditForm"]').addClass('formErrorColor');
                 postObj.isValid = false;
@@ -82,6 +82,71 @@ function applyFormEvents() {
     }, '#ownerSectionEditForm', '/material/editMaterialItem', function(editedObject) {
         mainContentHandlers.handlers['Material'].applyModificationsToItemOnView(editedObject);
     }));
+
+
+    var unitaryPrice = editMaterial.find('#unitaryPriceEditForm');
+    var unitaryPriceWithDiscount = editMaterial.find('#unitaryPriceDiscountEditForm');
+    var discountEditForm = editMaterial.find('#discountEditForm');
+    var increaseStockEditForm = editMaterial.find('#increaseStockEditForm');
+    var boughtPriceEditForm = editMaterial.find('#boughtPriceEditForm');
+    editMaterial.find('#increaseStockEditForm, #discountEditForm, #boughtPriceEditForm').keyup(function() {
+        var discValue = discountEditForm.val();
+        var incValue = increaseStockEditForm.val();
+        var boughtPriceValue = boughtPriceEditForm.val();
+        if(isPositiveDouble(discValue) === isPositiveInteger(incValue) === isPositiveDouble(boughtPriceValue) === true) {
+            var value = (boughtPriceValue / incValue);
+            unitaryPriceWithDiscount.val(value.toFixed(3).replace(/0{0,2}$/, "") + '€');
+            unitaryPrice.val((value / (1 - discValue / 100)).toFixed(3).replace(/0{0,2}$/, "") + '€');
+        } else {
+            unitaryPrice.val('N/A');
+            unitaryPriceWithDiscount.val('N/A');
+        }
+    });
+}
+
+function getInputValueFunc(tmp) {
+    return tmp.val();
+}
+
+function getInputValueNumberHandledFunc(tmp) {
+    return handleNumberEntry(tmp.val());
+}
+
+function validateFormCommon(form, inputId, postObj, allowNA, selectValueFunc, predicate) {
+    var tmp = form.find('#' + inputId);
+    var tmpValue = selectValueFunc(tmp);
+    if((allowNA === false || (allowNA === true && tmpValue !== 'N/A')) && predicate(tmpValue) === false) {
+        form.find('label[for="' + inputId + '"]').addClass('formErrorColor');
+        postObj.isValid = false;
+    } else {
+        postObj.postContent[tmp.attr('name')] = tmpValue;
+    }
+}
+
+function validateFormStringNotEmpty(form, inputId, postObj, allowNA) {
+    validateFormCommon(form, inputId, postObj, allowNA, getInputValueFunc, isStringNotEmptySpaces);
+}
+
+function validateFormInteger(form, inputId, postObj, allowNA) {
+    validateFormCommon(form, inputId, postObj, allowNA, getInputValueNumberHandledFunc, isPositiveInteger);
+}
+
+function validateFormDouble(form, inputId, postObj, allowNA) {
+    validateFormCommon(form, inputId, postObj, allowNA, getInputValueNumberHandledFunc, isPositiveDouble);
+}
+
+function validateFormDoubleWithMax(form, inputId, postObj, allowNA, maxNumber) {
+    validateFormCommon(form, inputId, postObj, allowNA, getInputValueNumberHandledFunc, function(val) {
+        return isPositiveDouble(val) && val <= maxNumber;
+    });
+}
+
+function validateFormSelect(form, inputId, postObj, allowNA) {
+    validateFormCommon(form, inputId, postObj, allowNA, function(tmp) {
+        return tmp.find(':selected').text();
+    }, function(tmpValue) {
+        return !(!tmpValue || tmpValue === '');
+    });
 }
 
 function materialRelatedSaveFormClickFunction(form, intermediaryValidations, ownerSectionIdSelector, postUrl, successCallback) {
@@ -126,46 +191,7 @@ function saveFormClickFunction(form, intermediaryValidations, ownerSectionIdSele
     }
 }
 
-function getInputValueFunc(tmp) {
-    return tmp.val();
-}
-
-function getInputValueNumberHandledFunc(tmp) {
-    return handleNumberEntry(tmp.val());
-}
-
-function validateFormCommon(form, inputId, postObj, selectValueFunc, predicate) {
-    var tmp = form.find('#' + inputId);
-    var tmpValue = selectValueFunc(tmp);
-    if(predicate(tmpValue) === false) {
-        form.find('label[for="' + inputId + '"]').addClass('formErrorColor');
-        postObj.isValid = false;
-    } else {
-        postObj.postContent[tmp.attr('name')] = tmpValue;
-    }
-}
-
-function validateFormStringNotEmpty(form, inputId, postObj) {
-    validateFormCommon(form, inputId, postObj, getInputValueFunc, isStringNotEmptySpaces);
-}
-
-function validateFormInteger(form, inputId, postObj) {
-    validateFormCommon(form, inputId, postObj, getInputValueNumberHandledFunc, isPositiveInteger);
-}
-
-function validateFormDouble(form, inputId, postObj) {
-    validateFormCommon(form, inputId, postObj, getInputValueNumberHandledFunc, isPositiveDouble);
-}
-
-function validateFormSelect(form, inputId, postObj) {
-    validateFormCommon(form, inputId, postObj, function(tmp) {
-        return tmp.find(':selected').text();
-    }, function(tmpValue) {
-        return !(!tmpValue || tmpValue === '');
-    });
-}
-
-function commonAddAndEditMaterialFormPreparations(form, sectionObject, ownerSectionSelector, supplierSelectionSelector, sectionTitleSelector) {
+function commonAddAndEditMaterialFormPreparations(form, sectionObject, ownerSectionSelector) {
 
     // reset any red colored errors
     form.find('label[class*="formErrorColor"]').removeClass('formErrorColor');
@@ -182,15 +208,6 @@ function commonAddAndEditMaterialFormPreparations(form, sectionObject, ownerSect
     })();
     form.find(ownerSectionSelector).val(JSON.stringify(sectionInformation));
 
-    // set supplier options
-    var selectWrapper = form.find(supplierSelectionSelector);
-    selectWrapper.empty();
-    selectWrapper.append($('<option></option>').text(''));
-    menuHandlers.handlers['Fornecedores'].getAllDisplayNames().forEach(function(item) {
-        selectWrapper.append($('<option></option>').text(item));
-    });
-    selectWrapper.append($('<option></option>').text('Outro'));
-
     // activate elements
     $('#wholeScreenOpacity').show();
     form.show();
@@ -203,12 +220,10 @@ function activateAddMaterialForm(sectionObject) {
 
     // reset values
     var wrapperFormDiv = $('#addMaterialElement').find('form > div');
-    var obligatoryInputs = wrapperFormDiv.find('>:first-child input');
-    obligatoryInputs.get(0).value = '';
-    obligatoryInputs.get(1).value = '0';
-    wrapperFormDiv.find('>:nth-child(n+2) input').val('0');
+    wrapperFormDiv.find('#minimumStockAddForm, #salePriceAddForm').val('N/A');
+    wrapperFormDiv.find('#actualStockAddForm').val(0);
 
-    commonAddAndEditMaterialFormPreparations(form, sectionObject, '#ownerSectionAddForm', '#originSupplierAddForm');
+    commonAddAndEditMaterialFormPreparations(form, sectionObject, '#ownerSectionAddForm');
 }
 
 function activateEditMaterialForm(itemObject) {
@@ -221,6 +236,8 @@ function activateEditMaterialForm(itemObject) {
     form.find('#minimumStockEditForm').val(itemObject.minimumStock());
     form.find('#actualStockEditForm').val(itemObject.actualStock());
     form.find('#originalDisplayNameEditForm').val(itemObject.displayName());
+    form.find('#salePriceEditForm').val(itemObject.salePrice());
+
 
     // reset values
     form.find('#decreaseStockEditForm').val('');
@@ -228,7 +245,16 @@ function activateEditMaterialForm(itemObject) {
     formIncreaseStockSection.find('input').val('0');
     formIncreaseStockSection.find('#increaseStockEditForm').val('');
 
-    commonAddAndEditMaterialFormPreparations(form, itemObject, '#ownerSectionEditForm', '#originSupplierEditForm');
+    // set supplier options
+    var selectWrapper = form.find('#originSupplierEditForm');
+    selectWrapper.empty();
+    selectWrapper.append($('<option></option>').text(''));
+    menuHandlers.handlers['Fornecedores'].getAllDisplayNames().forEach(function(item) {
+        selectWrapper.append($('<option></option>').text(item));
+    });
+    selectWrapper.append($('<option></option>').text('N/A'));
+
+    commonAddAndEditMaterialFormPreparations(form, itemObject, '#ownerSectionEditForm');
 }
 
 function activateAlreadyExistsDiv(msg, classToSet) {

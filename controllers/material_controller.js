@@ -1,8 +1,34 @@
 module.exports = {
     insertMaterialItem: insertMaterialItem,
-    editMaterialItem:     editMaterialItem,
+    editMaterialItem: editMaterialItem,
+    getLatestTransactions: getLatestTransactions,
+    getAllTransactions: getAllTransactions,
     getMaterialContent: getMaterialContent
 }
+
+var wurth = { date: '23-01-2014', supplier: 'Wurth', quantity: 30, discount: 20, salePrice: 300 };
+var berner = { date: '24-01-2014', supplier: 'Berner', quantity: 40, discount: 20, salePrice: 100 };
+var pecol = { date: '25-01-2014', supplier: 'Pecol', quantity: 50, discount: 20, salePrice: 200 };
+
+var topInformation = {
+    wurth: wurth,
+    berner: berner,
+    pecol: pecol
+}
+
+
+function getLatestTransactions(req, res) {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(topInformation));
+}
+
+function getAllTransactions(req, res) {
+
+}
+
+
+
 
 function insertMaterialItem(req, res) {
     var ret = req.body;
