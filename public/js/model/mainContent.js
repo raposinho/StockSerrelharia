@@ -88,6 +88,9 @@ function MaterialItem(parent, item) {
     this.salePrice = ko.observable(item.salePrice);
     this.actualStock = ko.observable(item.actualStock);
     this.minimumStock = ko.observable(item.minimumStock);
+    this.salePriceDisplay = ko.pureComputed(function() {
+        return this.salePrice() + '€';
+    }, this);
     this.activateEditForm = function() {
         activateEditMaterialForm(this);
     };

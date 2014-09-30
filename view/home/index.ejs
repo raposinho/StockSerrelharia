@@ -27,7 +27,7 @@
         <div id="bodyWrapper">
             <div id="contentWrapper">
                 <div id="sideBar">
-                    <div id="menuItemsWrapper" data-bind="template: { name: mainMenuItemDisplayMode, foreach: menuItems }"></div>
+                    <div id="menuItemsWrapper" data-bind="template: { name: 'menuItemsTemplate' }"></div>
                 </div>
                 <div id="mainBody">
                     <div id="mainContentWrapper" data-bind="template: { name: mainContentDisplayMode, data: mainContent }"></div>
@@ -185,6 +185,20 @@
         <script id="emptyTemplate" type="text/html"></script>
 
         <!-- templates related to main items in side bar -->
+        <script id="menuItemsTemplate" type="text/html">
+            <!-- ko template: { name: 'menuWarningsTemplate', data: menuItems.warnings } --><!-- /ko -->
+            <!-- ko template: { name: mainMenuItemDisplayMode, data: menuItems.suppliers } --><!-- /ko -->
+            <!-- ko template: { name: mainMenuItemDisplayMode, data: menuItems.materials } --><!-- /ko -->
+        </script>
+
+        <script id="menuWarningsTemplate" type="text/html">
+            <div data-bind="css: warningMenuItemClasses">
+                <div class="sideBarItemHeader">
+                    <p><span data-bind="text: displayName"/></p>
+                </div>
+            </div>
+        </script>
+
         <script id="noContentMainItemSidebarMenuTemplate" type="text/html">
             <div class="mainSectionSideBarObject">
                 <div class="sideBarItemHeader">
@@ -272,7 +286,7 @@
             <tr>
                 <td data-bind="text: displayName"></td>
                 <td data-bind="text: actualStock"></td>
-                <td data-bind="text: salePrice"></td>
+                <td data-bind="text: salePriceDisplay"></td>
                 <td><a data-bind="click: activateEditForm">Editar</a></td>
                 <td><a>Detalhes</a></td>
             </tr>
@@ -280,9 +294,22 @@
 
         <script id="materialItemDetails" type="text/html">
             <div id="itemDetailsDiv">
-                <h4>Detalhes de <span data-bind="text: displayName"/> em <span data-bind="text: parent.fullDisplayName"/></h4>
-                <div class="panel panel-default text-center tableBlackBorder materialTable">
-                    <div class="panel-heading">Ultimas transacções de cada Fornecedor</div>
+                <h4>Detalhes de <span data-bind="text: values.displayName"/> em <span data-bind="text: values.parent.fullDisplayName"/></h4>
+                <!-- ko template { name: 'tableDetailsTemplate',
+                                   data: { header: 'Ultimas transacções de cada Fornecedor' ,
+                                           tableBodyId: 'tableLatestInformationRowWrapper',
+                                           model: latestInformation,
+                                           modelEachTemplate: 'detailsEntryTemplate' },
+                                   afterRender: afterLatestInformationTableRendered } -->
+                <!-- /ko -->
+                <!-- ko template { name: 'bottomPartDetailsMaterial' } --><!-- /ko -->
+            </div>
+        </script>
+
+        <script id="tableDetailsTemplate" type="text/html">
+            <div class="panel panel-default text-center tableBlackBorder materialTable margin15BothSides">
+                <div class="panel-heading" data-bind="text: header"></div>
+                <div data-bind="attr: { id: tableBodyId }">
                     <table class="table" rules="cols">
                         <thead>
                         <tr>
@@ -296,23 +323,49 @@
                             <td>Data</td>
                         </tr>
                         </thead>
-                        <tbody data-bind="template: {name: 'detailsLatestEntryTemplate', foreach: latestInformation }"></tbody>
+                        <tbody data-bind="template: { name: modelEachTemplate, foreach: model }"></tbody>
                     </table>
-                </div>
-                <div>
-                    <div id="editMaterialButtonSection">
-                        <div class="form-group col-md-2 col-md-offset-2">
-                            <button type="submit" class="btn btn-default" id="editMaterialSaveButton">Verificar todas as transacções</button>
-                        </div>
-                        <div class="form-group col-md-2 col-md-offset-4">
-                            <button type="submit" class="btn btn-default" id="editMaterialCancelButton">Fechar</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </script>
 
-        <script id="detailsLatestEntryTemplate" type="text/html">
+
+        <script id="bottomPartDetailsMaterial" type="text/html">
+            <div>
+                <!-- ko ifnot: isShowingAllInfo -->
+                    <div class="form-group col-md-2 col-md-offset-2">
+                        <button type="submit" class="btn btn-default" data-bind="click: showAllInfo">Verificar todas as transacções</button>
+                    </div>
+                    <div class="form-group col-md-2 col-md-offset-4">
+                        <button type="submit" class="btn btn-default" data-bind="click: close">Fechar</button>
+                    </div>
+                <!-- /ko -->
+                <!-- ko if: isShowingAllInfo -->
+                    <!-- ko with: allInformation -->
+                        <div class="form-group">
+                            <label for="materialDetailsSelect" class="col-md-3">Restringir transacções</label>
+                            <div class="col-md-3">
+                                <select class="form-control" id="materialDetailsSelect" data-bind="options: possibleSelections,
+                                                                                                   value: currentSelection"></select>
+                            </div>
+                        </div>
+                        <div class="row margin15Bottom"/>
+                        <!-- ko template { name: 'tableDetailsTemplate',
+                                           data: { header: 'Ultimas transacções de: ' + currentSelection(),
+                                                   tableBodyId: 'tableAllInformationRowWrapper',
+                                                   model: selectedModel,
+                                                   modelEachTemplate: 'detailsEntryTemplate' },
+                                           afterRender: afterAllInformationTableRendered } -->
+                        <!-- /ko -->
+                    <!-- /ko -->
+                    <div class="form-group col-md-2 col-md-offset-5">
+                        <button type="submit" class="btn btn-default" data-bind="click: close">Fechar</button>
+                    </div>
+                <!-- /ko -->
+            </div>
+        </script>
+
+        <script id="detailsEntryTemplate" type="text/html">
             <tr>
                 <td data-bind="text: supplier, css: colorClass"></td>
                 <td data-bind="text: quantity"></td>

@@ -10,17 +10,10 @@ function invalidateMenu() {
 function getMenuItems(callback) {
     callback(menuItems);
 }
-var fornecedores = {
-    displayName: 'Fornecedores',
-    appId: 2,
-    subSections: [ { displayName: 'Berner', appId: 81 },
-        { displayName: 'Wurth', appId: 82 } ]
-}
+var fornecedores = [ { displayName: 'Berner', appId: 81 },
+                     { displayName: 'Wurth', appId: 82 } ];
 
-var materiais = {
-    displayName: 'Material',
-    appId: 9,
-    subSections: [
+var materiais = [
         {
             displayName: 'argolas',
             appId:2,
@@ -53,11 +46,10 @@ var materiais = {
             appId:1,
             subSections: [ { displayName: 'DosBons', appId:'1a' } ]
         }
-    ]
-};
-
-var menuItems = [
-    { displayName: 'Alertas', appId: 1 },
-    fornecedores,
-    materiais
 ];
+
+var menuItems = {
+    warnings: 2,
+    suppliers: fornecedores,
+    materials: materiais
+};

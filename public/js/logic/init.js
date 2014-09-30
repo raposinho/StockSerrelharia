@@ -1,4 +1,10 @@
 (function() {
+    window.onerror = function (errorMsg, url, lineNumber, columnNumber, errorObject) {
+        if (errorObject && /<omitted>/.test(errorMsg)) {
+            console.error('Full exception message: ' + errorObject.message);
+        }
+    }
+
     var requestOnReadyAction = (function() {
         var isReady = false;
         var pendingActions = [];
@@ -34,7 +40,9 @@
         success: function(menuContent) {
             requestOnReadyAction(function() {
                 viewModel.setMenuItems(menuContent);
-//                viewModel.setDetailsOwnerMaterialItem(testValue);
+                var entry = new DetailsEntry(testValue, latestInformation);
+                entry.setAllInformation(latestInformation);
+                viewModel.setDetailsOwnerMaterialItem(entry);
                 ko.applyBindings(viewModel);
             });
         }
@@ -55,23 +63,17 @@ var hexagonais = {
 
 
 var wurth = { date: '23-01-2014', supplier: 'Wurth', quantity: 30, discount: 20, salePrice: 300 };
-
-
-var berner = {
-    date: '24-01-2014',
-    supplier: 'Berner',
-    quantity: 100,
-    salePrice: 100,
-    discount: 0.2
-};
-
-
+var berner = { date: '24-01-2014', supplier: 'Berner', quantity: 100, salePrice: 100, discount: 0.2 };
 var pecol = { date: '25-01-2014', supplier: 'Pecol', quantity: 50, discount: 0.20, salePrice: 200 };
+var benfica = { date: '25-01-2014', supplier: 'benfica', quantity: 50, discount: 0.20, salePrice: 200 };
+var porto = { date: '25-01-2014', supplier: 'porto', quantity: 50, discount: 0.20, salePrice: 200 };
 
 var topInformation = [
     wurth,
     berner,
-    pecol
+    pecol,
+    benfica,
+    porto
 ];
 
 var testValue = {
@@ -80,32 +82,83 @@ var testValue = {
     minimumStock: 10,
     actualStock: 20,
     salePrice: 50,
-    parent: hexagonais,
-    latestInformation: (function(unorganizedInfo) {
-        if(unorganizedInfo.length === 0) {
-            return unorganizedInfo;
-        } else if(unorganizedInfo.length === 1) {
-            return [ new InfoEntry(unorganizedInfo[0], 'detailsNormalColor') ];
-        }
+    parent: hexagonais
+}
 
-        unorganizedInfo.sort(function(item1, item2) {
-            return item1.salePrice - item2.salePrice;
-        });
+var latestInformation = (function(unorganizedInfo) {
+    if(unorganizedInfo.length === 0) {
+        return unorganizedInfo;
+    } else if(unorganizedInfo.length === 1) {
+        return [ new InfoEntry(unorganizedInfo[0], 'detailsNormalColor') ];
+    }
 
-        var allEntries = [ new InfoEntry(unorganizedInfo.shift(), 'detailsCheapestColor') ];
-        if(unorganizedInfo.length == 1) {
-            allEntries.push(new InfoEntry(unorganizedInfo[0], 'detailsMostExpensiveColor'));
-            return allEntries;
-        }
+    unorganizedInfo.sort(function(item1, item2) {
+        return item1.salePrice - item2.salePrice;
+    });
 
-        var mostExpensive = new InfoEntry(unorganizedInfo.pop(), 'detailsMostExpensiveColor');
-        unorganizedInfo.forEach(function(entry) {
-            allEntries.push(new InfoEntry(entry, 'detailsNormalColor'))
-        });
-
-        allEntries.push(mostExpensive);
+    var allEntries = [ new InfoEntry(unorganizedInfo.shift(), 'detailsCheapestColor') ];
+    if(unorganizedInfo.length == 1) {
+        allEntries.push(new InfoEntry(unorganizedInfo[0], 'detailsMostExpensiveColor'));
         return allEntries;
-    })(topInformation)
+    }
+
+    var mostExpensive = new InfoEntry(unorganizedInfo.pop(), 'detailsMostExpensiveColor');
+    unorganizedInfo.forEach(function(entry) {
+        allEntries.push(new InfoEntry(entry, 'detailsNormalColor'))
+    });
+
+    allEntries.push(mostExpensive);
+    return allEntries;
+})(topInformation);
+
+function DetailsEntry(values, latestInformation) {
+    this.values = values;
+    this.latestInformation = latestInformation;
+    this.allInformation = null;
+    this.isShowingAllInfo = ko.observable(true);
+    this.setAllInformation = function(allInfo) {
+        this.allInformation = {
+            model: allInfo,
+            selectedModel: ko.observableArray(allInfo),
+            currentSelection: ko.observable('Todos'),
+            possibleSelections: (function() {
+                var selections = this.latestInformation.map(function(item) {
+                    return item.supplier;
+                }).sort();
+                selections.unshift('Todos','Remoções');
+                return selections;
+            })(),
+            afterAllInformationTableRendered: (function(curObj) {
+                return function() {
+                    var modelRows = curObj.allInformation.selectedModel().length;
+                    var rows = modelRows > 5 ? 5 : modelRows;
+                    var totalHeight = (rows * 34) + 33;
+                    $('#tableAllInformationRowWrapper').height(totalHeight + 'px');
+                };
+            })(this)
+        };
+        this.allInformation.currentSelection.subscribe(function(newValue) {
+            if(newValue === 'Todos') {
+                this.selectedModel(this.model);
+            } else {
+                this.selectedModel(this.model.filter(function(item) {
+                    return item.supplier === newValue;
+                }));
+            }
+        }, this.allInformation);
+    };
+    this.showAllInfo = function() {
+        this.setAllInformation(latestInformation);
+        this.isShowingAllInfo(true);
+    };
+    this.close = function() {
+        viewModel.setDetailsOwnerMaterialItem(null);
+    };
+    this.afterLatestInformationTableRendered = function() {
+        var rows = latestInformation.length > 4 ? 4 : latestInformation.length;
+        var totalHeight = (rows * 34) + 33;
+        $('#tableLatestInformationRowWrapper').height(totalHeight + 'px');
+    }
 }
 
 function InfoEntry(entry, colorClass) {
@@ -119,3 +172,4 @@ function InfoEntry(entry, colorClass) {
     this.totalPriceDiscount = this.salePriceDiscount * this.quantity;
     this.colorClass = colorClass;
 }
+

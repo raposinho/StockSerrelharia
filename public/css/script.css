@@ -12,6 +12,10 @@ html, body, #bodyWrapper {
     --------------------------------------------- general ---------------------------------------------
     --------------------------------------------------------------------------------------------------- */
 
+.warningsBackgroundActive {
+    background-color: #c9302c;
+}
+
 .formErrorColor {
     color: #c9302c;
 }
@@ -128,7 +132,6 @@ input[type="text"]:disabled {
 
 .materialTable > div {
     height: 30px;
-    padding-top: 5px;
 }
 
 .materialTable tr {
@@ -222,13 +225,17 @@ input[type="text"]:disabled {
     padding: 0px 20px 0px 20px;
 }
 
-#addMaterialElement label, #editMaterialElement label {
+#addMaterialElement label, #editMaterialElement label, label[for="materialDetailsSelect"] {
     padding-top: 7px;
 }
 
 #addMaterialElement input, #addMaterialElement label, #addMaterialElement select,
-#editMaterialElement input, #editMaterialElement label, #editMaterialElement select {
+#editMaterialElement input, #editMaterialElement label, #editMaterialElement select, #materialDetailsSelect {
     height: 35px;
+}
+
+#materialDetailsSelect {
+    padding-top: 5px;
 }
 
 #addMaterialElement select, #editMaterialElement select {
@@ -269,14 +276,20 @@ input[type="text"]:disabled {
 #itemDetailsDiv {
     z-index: 9999;
     position: fixed;
-
     width: 900px;
     top: 30px;
     left: calc(50% - 450px);
     background-color: white;
     border: 1px solid #3e3f3a;
     border-radius: 20px;
-    padding: 0px 20px 0px 20px;
+}
+
+.margin15BothSides {
+    margin: 0px 15px 0px 15px;
+}
+
+.margin15Bottom {
+    margin-bottom: 15px;
 }
 
 #itemDetailsDiv h4 {
@@ -302,6 +315,18 @@ input[type="text"]:disabled {
 
 .detailsMostExpensiveColor {
     color: darkred;
+}
+
+#tableLatestInformationRowWrapper, #tableAllInformationRowWrapper {
+    overflow-y: auto;
+}
+
+#itemDetailsDiv .panel-heading {
+    padding-top: 5px;
+}
+
+#tableLatestInformationRowWrapper table, #tableAllInformationRowWrapper table {
+    margin-bottom: 0px;
 }
 
 

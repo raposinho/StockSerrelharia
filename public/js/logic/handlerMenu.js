@@ -33,9 +33,7 @@ MaterialSelectionHandler.prototype = new MenuSelectionHandler();
 function SupplierSelectionHandler(onSelection) {
     MenuSelectionHandler.call(this, null);
     this.getAllDisplayNames = function() {
-        return find(viewModel.menuItems, function(item) {
-            return item.displayName === 'Fornecedores';
-        }).subContent.map(function(item) {
+        return viewModel.menuItems.suppliers.subContent.map(function(item) {
             return item.displayName;
         });
     };
