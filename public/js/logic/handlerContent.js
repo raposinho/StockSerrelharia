@@ -26,5 +26,26 @@ function MaterialContentHandler() {
     };
     this.applyModificationsToItemOnView = function(editedObject) {
         this.searchRightElement(editedObject.sectionInformation).editInformation(editedObject);
-    }
+    };
+    this.loadLatestTransactionsDetails = function(originObject) {
+        $.ajax({
+            url: '/material/getLatestTransactions/' + originObject.appId,
+            type: 'GET',
+            dataType: "json",
+            success: function(latestDetails) {
+                viewModel.setDetailsOwnerMaterialItem(new DetailsEntry(originObject, latestDetails));
+                wholeScreenOpacity.show();
+            }
+        });
+    };
+    this.loadAllTransactionsDetails = function(detailsObject) {
+        $.ajax({
+            url: '/material/getAllTransactions/' + detailsObject.values.appId,
+            type: 'GET',
+            dataType: "json",
+            success: function(allTransactions) {
+                detailsObject.setAllInformation(allTransactions);
+            }
+        });
+    };
 }

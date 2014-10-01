@@ -6,16 +6,11 @@ module.exports = {
     getMaterialContent: getMaterialContent
 }
 
-var wurth = { date: '23-01-2014', supplier: 'Wurth', quantity: 30, discount: 20, salePrice: 300 };
-var berner = { date: '24-01-2014', supplier: 'Berner', quantity: 40, discount: 20, salePrice: 100 };
-var pecol = { date: '25-01-2014', supplier: 'Pecol', quantity: 50, discount: 20, salePrice: 200 };
+var wurth = { isIncrease: true, date: '23-01-2014', supplier: 'Wurth', quantity: 30, discount: 20, salePrice: 300 };
+var berner = { isIncrease: true, date: '24-01-2014', supplier: 'Berner', quantity: 40, discount: 20, salePrice: 100 };
+var pecol = { isIncrease: true, date: '25-01-2014', supplier: 'Pecol', quantity: 50, discount: 20, salePrice: 200 };
 
-var topInformation = {
-    wurth: wurth,
-    berner: berner,
-    pecol: pecol
-}
-
+var topInformation = [ wurth, berner, pecol ];
 
 function getLatestTransactions(req, res) {
     res.statusCode = 200;
@@ -23,12 +18,18 @@ function getLatestTransactions(req, res) {
     res.end(JSON.stringify(topInformation));
 }
 
+var removeEntry1 =  { isIncrease: false, quantity: 30, date: '27-01-2014' };
+var removeEntry2 =  { isIncrease: false, quantity: 40, date: '24-01-2014' };
+var removeEntry3 =  { isIncrease: false, quantity: 50, date: '22-01-2014' };
+
+var allInformation = [ wurth, berner, pecol ];
+allInformation.push(removeEntry1, berner, removeEntry2, berner, berner, berner, pecol, pecol, removeEntry3);
+
 function getAllTransactions(req, res) {
-
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(allInformation));
 }
-
-
-
 
 function insertMaterialItem(req, res) {
     var ret = req.body;
@@ -46,9 +47,6 @@ function insertMaterialItem(req, res) {
         res.end(JSON.stringify({ reason: 'Already exists this name' }));
         return;
     }
-
-
-
 
     ret.appId = '20';
     res.statusCode = 200;

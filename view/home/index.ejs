@@ -17,6 +17,7 @@
         <script type="application/javascript" src="/js/logic/handlerContent.js"></script>
         <script type="application/javascript" src="/js/logic/handlerMenu.js"></script>
         <script type="application/javascript" src="/js/model/mainContent.js"></script>
+        <script type="application/javascript" src="/js/model/materialDetails.js"></script>
         <script type="application/javascript" src="/js/model/menuItems.js"></script>
         <script type="application/javascript" src="/js/model/utils.js"></script>
         <script type="application/javascript" src="/js/model/viewModel.js"></script>
@@ -288,7 +289,7 @@
                 <td data-bind="text: actualStock"></td>
                 <td data-bind="text: salePriceDisplay"></td>
                 <td><a data-bind="click: activateEditForm">Editar</a></td>
-                <td><a>Detalhes</a></td>
+                <td><a data-bind="click: activateDetailsWindow">Detalhes</a></td>
             </tr>
         </script>
 
@@ -299,7 +300,7 @@
                                    data: { header: 'Ultimas transacções de cada Fornecedor' ,
                                            tableBodyId: 'tableLatestInformationRowWrapper',
                                            model: latestInformation,
-                                           modelEachTemplate: 'detailsEntryTemplate' },
+                                           modelEachTemplate: 'detailsIncreaseStockEntryTemplate' },
                                    afterRender: afterLatestInformationTableRendered } -->
                 <!-- /ko -->
                 <!-- ko template { name: 'bottomPartDetailsMaterial' } --><!-- /ko -->
@@ -354,7 +355,7 @@
                                            data: { header: 'Ultimas transacções de: ' + currentSelection(),
                                                    tableBodyId: 'tableAllInformationRowWrapper',
                                                    model: selectedModel,
-                                                   modelEachTemplate: 'detailsEntryTemplate' },
+                                                   modelEachTemplate: onEachEntryTemplate },
                                            afterRender: afterAllInformationTableRendered } -->
                         <!-- /ko -->
                     <!-- /ko -->
@@ -365,7 +366,7 @@
             </div>
         </script>
 
-        <script id="detailsEntryTemplate" type="text/html">
+        <script id="detailsIncreaseStockEntryTemplate" type="text/html">
             <tr>
                 <td data-bind="text: supplier, css: colorClass"></td>
                 <td data-bind="text: quantity"></td>
@@ -374,6 +375,13 @@
                 <td data-bind="text: totalPriceDiscount"></td>
                 <td data-bind="text: salePrice"></td>
                 <td data-bind="text: salePriceDiscount"></td>
+                <td data-bind="text: date"></td>
+            </tr>
+        </script>
+
+        <script id="detailsDecreaseStockEntryTemplate" type="text/html">
+            <tr>
+                <td colspan="7" data-bind="text: displayText, css: colorClass"></td>
                 <td data-bind="text: date"></td>
             </tr>
         </script>

@@ -25,6 +25,7 @@ function applyRoutes(router) {
     // materials
     router.get('/material/:type', ensureAjax, materialController.getMaterialContent);
     router.get('/material/getLatestTransactions/:item', ensureAjax, materialController.getLatestTransactions);
+    router.get('/material/getAllTransactions/:item', ensureAjax, materialController.getAllTransactions);
 
     router.post('/material/insertMaterialItem', ensureAjax, materialController.insertMaterialItem);
     router.post('/material/editMaterialItem', ensureAjax, materialController.editMaterialItem);

@@ -94,6 +94,9 @@ function MaterialItem(parent, item) {
     this.activateEditForm = function() {
         activateEditMaterialForm(this);
     };
+    this.activateDetailsWindow = function() {
+        mainContentHandlers.handlers['Material'].loadLatestTransactionsDetails(this);
+    };
     this.editInformation = (function(curObj) {
         return function(editedInformation) {
             curObj.displayName(editedInformation.displayName);
